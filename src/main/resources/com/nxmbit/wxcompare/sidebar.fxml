@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.nxmbit.wxcompare.controller.SidebarController"
+      styleClass="sidebar"
+      prefWidth="240"
+      spacing="15">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="app-header">
+        <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
+            <Image url="@./assets/logo.png"/>
+        </ImageView>
+        <Label text="WxCompare" styleClass="title-3" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="themeToggleButton" styleClass="theme-toggle-button" onAction="#toggleTheme">
+            <graphic>
+                <FontIcon fx:id="themeIcon" iconLiteral="fth-moon"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <Separator/>
+
+    <!-- Navigation -->
+    <VBox spacing="8" styleClass="nav-container" VBox.vgrow="ALWAYS">
+        <Button styleClass="nav-button" text="Dashboard" onAction="#navigateToDashboard" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-home"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="Locations" onAction="#navigateToLocations" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-map-pin"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="Comparison" onAction="#navigateToComparison" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-bar-chart-2"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="Settings" onAction="#navigateToSettings" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-settings"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="Map" onAction="#navigateToMap" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-map"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="About" onAction="#navigateToAbout" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-info"/>
+            </graphic>
+        </Button>
+    </VBox>
+
+    <Separator/>
+
+    <!-- Version -->
+    <Label fx:id="versionLabel" text="v1.0.0" styleClass="version-label"/>
+</VBox>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.nxmbit.wxcompare.controller.SettingsController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Settings" styleClass="view-title"/>
+
+    <GridPane hgap="10" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints prefWidth="180"/>
+            <ColumnConstraints prefWidth="250" hgrow="ALWAYS"/>
+        </columnConstraints>
+
+        <Label text="OpenWeatherMap API Key:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="apiKeyField" promptText="Enter your API key"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Temperature Unit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="temperatureUnitComboBox" maxWidth="Infinity"
+                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="System of Measurement:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="systemOfMeasurementComboBox" maxWidth="Infinity"
+                  GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox alignment="BOTTOM_RIGHT" spacing="10">
+        <Button fx:id="saveButton" text="Save Settings" onAction="#saveSettings"/>
+    </HBox>
+</VBox>
