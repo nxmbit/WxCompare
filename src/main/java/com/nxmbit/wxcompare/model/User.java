@@ -1,5 +1,7 @@
 package com.nxmbit.wxcompare.model;
 
+import com.nxmbit.wxcompare.enums.SystemOfMeasurement;
+import com.nxmbit.wxcompare.enums.TemperatureUnit;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,6 +11,8 @@ public class User {
     private Long id;
 
     private String openWeatherMapApiKey;
+
+    private String googleMapsApiKey;
 
     @Enumerated(EnumType.STRING)
     private TemperatureUnit temperatureUnit;
@@ -49,5 +53,13 @@ public class User {
 
     public void setSystemOfMeasurement(SystemOfMeasurement systemOfMeasurement) {
         this.systemOfMeasurement = systemOfMeasurement;
+    }
+
+    public String getGoogleMapsApiKey() {
+        return googleMapsApiKey;
+    }
+
+    public void setGoogleMapsApiKey(String googleMapsApiKey) {
+        this.googleMapsApiKey = googleMapsApiKey;
     }
 }

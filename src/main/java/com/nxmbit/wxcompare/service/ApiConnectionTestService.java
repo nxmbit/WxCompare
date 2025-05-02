@@ -1,28 +1,41 @@
 package com.nxmbit.wxcompare.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 public class ApiConnectionTestService {
 
-    private static final String API_TEST_URL = "https://api.openweathermap.org/data/2.5/weather?q=London&appid=%s";
+    private static final String WEATHER_API_TEST_URL = "https://api.openweathermap.org/data/2.5/weather?q=London&appid=%s";
+    private static final String GMAPS_API_TEST_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=London&key=%s";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * Tests the OpenWeatherMap API connection with the given API key
-     * @param apiKey The API key to test
-     * @return A ConnectionResult object containing status and message
-     */
     public ConnectionResult testApiConnection(String apiKey) throws InterruptedException {
         if (apiKey == null || apiKey.trim().isEmpty()) {
             return new ConnectionResult(false, "API key is missing.");
         }
+        Thread.sleep(1000);
+        return testConnection(String.format(WEATHER_API_TEST_URL, apiKey), false);
+    }
 
-        Thread.sleep(4000); // Simulate a delay for testing purposes
+    public ConnectionResult testGoogleMapsApiConnection(String apiKey) throws InterruptedException {
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            return new ConnectionResult(false, "Google Maps API key is missing.");
+        }
+        Thread.sleep(1000);
+        return testConnection(String.format(GMAPS_API_TEST_URL, apiKey), true);
+    }
 
+    private ConnectionResult testConnection(String urlString, boolean isGoogleApi) {
         HttpURLConnection connection = null;
         try {
-            URL url = new URL(String.format(API_TEST_URL, apiKey));
+            URL url = new URL(urlString);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
@@ -30,16 +43,34 @@ public class ApiConnectionTestService {
 
             int responseCode = connection.getResponseCode();
 
-            if (responseCode == 200) {
-                return new ConnectionResult(true, "Connection successful");
-            } else if (responseCode == 401) {
-                return new ConnectionResult(false, "Invalid API key");
-            } else {
-                return new ConnectionResult(false, "API error: " + responseCode);
+            if (responseCode != 200) {
+                if (!isGoogleApi && responseCode == 401) {
+                    return new ConnectionResult(false, "Invalid OpenWeatherMap API key");
+                } else {
+                    return new ConnectionResult(false, "OpenWeatherMap API error: " + responseCode);
+                }
             }
 
+            if (isGoogleApi) {
+                String response = new BufferedReader(new InputStreamReader(connection.getInputStream()))
+                        .lines().collect(Collectors.joining("\n"));
+
+                JsonNode jsonResponse = objectMapper.readTree(response);
+                String status = jsonResponse.get("status").asText();
+
+                if ("OK".equals(status)) {
+                    return new ConnectionResult(true, "Connection successful");
+                } else if ("REQUEST_DENIED".equals(status) && jsonResponse.has("error_message")) {
+                    String errorMessage = "Google Maps API error: " + jsonResponse.get("error_message").asText();
+                    return new ConnectionResult(false, errorMessage);
+                } else {
+                    return new ConnectionResult(false, "Google Maps API error: " + status);
+                }
+            }
+
+            return new ConnectionResult(true, "Connection successful");
+
         } catch (IOException e) {
-            // Check if the error is related to network connectivity
             if (e.getMessage().contains("UnknownHostException") ||
                     e.getMessage().contains("ConnectException") ||
                     e.getMessage().contains("SocketTimeoutException")) {
@@ -54,7 +85,6 @@ public class ApiConnectionTestService {
         }
     }
 
-    // Simple result class to hold connection test results
     public static class ConnectionResult {
         private final boolean success;
         private final String message;

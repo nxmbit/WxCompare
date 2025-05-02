@@ -26,7 +26,6 @@ public class SidebarController {
     @FXML
     private Label versionLabel;
 
-    private MainController mainController;
     private ResourceBundle resources;
     private boolean isDarkTheme = true;
 
@@ -37,9 +36,6 @@ public class SidebarController {
         EventBusService.register(this);
     }
 
-    public void setMainController(MainController controller) {
-        this.mainController = controller;
-    }
 
     private void setLightTheme() {
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
@@ -56,7 +52,7 @@ public class SidebarController {
 
     @FXML
     private void navigateToLocations(ActionEvent event) {
-        loadView("locations-view.fxml");
+        loadView("locations-search-view.fxml");
     }
 
     @FXML

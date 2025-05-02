@@ -1,10 +1,9 @@
 package com.nxmbit.wxcompare.controller;
 
-import com.nxmbit.wxcompare.model.SystemOfMeasurement;
-import com.nxmbit.wxcompare.model.TemperatureUnit;
+import com.nxmbit.wxcompare.enums.SystemOfMeasurement;
+import com.nxmbit.wxcompare.enums.TemperatureUnit;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.repository.UserRepository;
-import com.nxmbit.wxcompare.service.ApiConnectionTestService;
 import com.nxmbit.wxcompare.util.ApiConnectionDialogUtil;
 import com.nxmbit.wxcompare.util.ControllerUtils;
 import javafx.application.Platform;
@@ -16,10 +15,16 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
+import static com.nxmbit.wxcompare.util.ApiConnectionDialogUtil.testGoogleMapsApiConnection;
+import static com.nxmbit.wxcompare.util.ApiConnectionDialogUtil.testWeatherApiConnection;
+
 public class SettingsController implements Initializable {
 
     @FXML
     private TextField apiKeyField;
+
+    @FXML
+    private TextField googleMapsApiKeyField;
 
     @FXML
     private Button saveButton;
@@ -44,11 +49,10 @@ public class SettingsController implements Initializable {
     private void loadUserSettings() {
         user = userRepository.findFirstUser().orElse(new User());
 
-        if (user != null) {
-            apiKeyField.setText(user.getOpenWeatherMapApiKey());
-            temperatureUnitComboBox.setValue(user.getTemperatureUnit());
-            systemOfMeasurementComboBox.setValue(user.getSystemOfMeasurement());
-        }
+        apiKeyField.setText(user.getOpenWeatherMapApiKey());
+        googleMapsApiKeyField.setText(user.getGoogleMapsApiKey());
+        temperatureUnitComboBox.setValue(user.getTemperatureUnit());
+        systemOfMeasurementComboBox.setValue(user.getSystemOfMeasurement());
     }
 
     @FXML
@@ -57,49 +61,84 @@ public class SettingsController implements Initializable {
             user = new User();
         }
 
-        String apiKey = apiKeyField.getText();
-        user.setOpenWeatherMapApiKey(apiKey);
+        String weatherApiKey = apiKeyField.getText();
+        String mapsApiKey = googleMapsApiKeyField.getText();
+
+        user.setOpenWeatherMapApiKey(weatherApiKey);
+        user.setGoogleMapsApiKey(mapsApiKey);
         user.setTemperatureUnit(temperatureUnitComboBox.getValue());
         user.setSystemOfMeasurement(systemOfMeasurementComboBox.getValue());
 
         saveButton.setDisable(true);
 
-        CompletableFuture.supplyAsync(() -> {
-            ApiConnectionTestService connectionService = new ApiConnectionTestService();
-            try {
-                return connectionService.testApiConnection(apiKey);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).thenAccept(result -> {
-            Platform.runLater(() -> {
-                saveButton.setDisable(false);
+        // First test the weather API
+        testWeatherApiConnection(weatherApiKey)
+                .thenCompose(weatherResult -> {
+                    if (weatherResult.isSuccess()) {
+                        // If weather API is successful, test Google Maps API
+                        return testGoogleMapsApiConnection(mapsApiKey)
+                                .thenApply(mapsResult -> new ApiConnectionDialogUtil.ApiTestResults(weatherResult, mapsResult));
+                    } else {
+                        // Weather API failed, skip Google Maps test
+                        return CompletableFuture.completedFuture(
+                                new ApiConnectionDialogUtil.ApiTestResults(weatherResult, null));
+                    }
+                })
+                .thenAccept(this::handleApiTestResults)
+                .exceptionally(ex -> {
+                    handleTestError(ex);
+                    return null;
+                });
+    }
 
-                if (result.isSuccess()) {
+
+    private void handleApiTestResults(ApiConnectionDialogUtil.ApiTestResults results) {
+        Platform.runLater(() -> {
+            saveButton.setDisable(false);
+
+            if (results.weatherResult.isSuccess()) {
+                if (results.mapsResult != null && results.mapsResult.isSuccess()) {
+                    // Both APIs successful
                     userRepository.save(user);
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Settings Saved");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Your settings have been saved successfully.");
-                    alert.showAndWait();
-                } else {
-                    ApiConnectionDialogUtil.checkApiConnection(this::saveSettings,
+                    showSuccessAlert();
+                } else if (results.mapsResult != null) {
+                    // Weather API good, Maps API bad
+                    ApiConnectionDialogUtil.showConnectionErrorDialog(
+                            this::saveSettings,
                             ControllerUtils::loadSettingsView,
-                            result);
+                            results.mapsResult);
+                } else {
+                    // Weather API good, Maps API not tested (shouldn't happen)
+                    userRepository.save(user);
+                    showSuccessAlert();
                 }
-            });
-        }).exceptionally(ex -> {
-            Platform.runLater(() -> {
-                saveButton.setDisable(false);
+            } else {
+                // Weather API failed
+                ApiConnectionDialogUtil.showConnectionErrorDialog(
+                        this::saveSettings,
+                        ControllerUtils::loadSettingsView,
+                        results.weatherResult);
+            }
+        });
+    }
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Connection Error");
-                alert.setHeaderText("Failed to test API connection");
-                alert.setContentText("Error: " + ex.getMessage());
-                alert.showAndWait();
-            });
-            return null;
+    private void showSuccessAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Settings Saved");
+        alert.setHeaderText(null);
+        alert.setContentText("Your settings have been saved successfully.");
+        alert.showAndWait();
+    }
+
+    private void handleTestError(Throwable ex) {
+        Platform.runLater(() -> {
+            saveButton.setDisable(false);
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Connection Error");
+            alert.setHeaderText("Failed to test API connection");
+            alert.setContentText("Error: " + ex.getMessage());
+            alert.showAndWait();
         });
     }
 }

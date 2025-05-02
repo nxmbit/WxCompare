@@ -22,13 +22,17 @@
         <TextField fx:id="apiKeyField" promptText="Enter your API key"
                    GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-        <Label text="Temperature Unit:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="temperatureUnitComboBox" maxWidth="Infinity"
-                  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <Label text="Google Maps API Key:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="googleMapsApiKeyField" promptText="Enter your API key"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-        <Label text="System of Measurement:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-        <ComboBox fx:id="systemOfMeasurementComboBox" maxWidth="Infinity"
+        <Label text="Temperature Unit:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="temperatureUnitComboBox" maxWidth="Infinity"
                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="System of Measurement:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="systemOfMeasurementComboBox" maxWidth="Infinity"
+                  GridPane.rowIndex="3" GridPane.columnIndex="1"/>
     </GridPane>
 
     <HBox alignment="BOTTOM_RIGHT" spacing="10">

@@ -30,7 +30,7 @@ public class MainController {
                 loadView("dashboard-view.fxml");
                 break;
             case KeyboardShortcutEvent.NAVIGATE_LOCATIONS:
-                loadView("locations-view.fxml");
+                loadView("locations-search-view.fxml");
                 break;
             case KeyboardShortcutEvent.NAVIGATE_COMPARISON:
                 loadView("comparison-view.fxml");

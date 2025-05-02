@@ -1,4 +1,4 @@
-package com.nxmbit.wxcompare.model;
+package com.nxmbit.wxcompare.enums;
 
 public enum SystemOfMeasurement {
     METRIC,

@@ -38,7 +38,7 @@
                 <FontIcon iconLiteral="fth-home"/>
             </graphic>
         </Button>
-        <Button styleClass="nav-button" text="Locations" onAction="#navigateToLocations" maxWidth="Infinity" alignment="CENTER_LEFT">
+        <Button styleClass="nav-button" text="Locations Search" onAction="#navigateToLocations" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-map-pin"/>
             </graphic>

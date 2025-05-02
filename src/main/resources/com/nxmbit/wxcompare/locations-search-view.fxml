@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.nxmbit.wxcompare.controller.LocationsSearchController"
+           prefWidth="400.0" prefHeight="300.0">
+    <BorderPane>
+        <top>
+            <VBox>
+                <padding>
+                    <Insets top="15" right="10" bottom="1" left="10"/>
+                </padding>
+                <HBox>
+                    <Label text="Location Search" styleClass="h3"/>
+                </HBox>
+                <TextField fx:id="searchField" promptText="Enter city name..."/>
+                <Label fx:id="statusLabel" text=""
+                       styleClass="text-sm, text-muted"/>
+            </VBox>
+        </top>
+        <center>
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="5" right="10" bottom="10" left="10"/>
+                </padding>
+                <Label text="Search Results" styleClass="h3"/>
+                <ListView fx:id="resultsListView" VBox.vgrow="ALWAYS"/>
+            </VBox>
+        </center>
+        <bottom>
+            <BorderPane>
+                <padding>
+                    <Insets top="5" right="10" bottom="10" left="10"/>
+                </padding>
+                <left>
+                    <Label fx:id="errorLabel" styleClass="text-danger" visible="false"/>
+                </left>
+            </BorderPane>
+        </bottom>
+    </BorderPane>
+</StackPane>

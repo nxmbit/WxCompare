@@ -1,7 +1,6 @@
 package com.nxmbit.wxcompare;
 
 import atlantafx.base.theme.PrimerDark;
-import com.nxmbit.wxcompare.controller.MainController;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.repository.UserRepository;
 import com.nxmbit.wxcompare.service.ApiConnectionTestService;
@@ -13,7 +12,6 @@ import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -21,6 +19,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static com.nxmbit.wxcompare.util.ApiConnectionDialogUtil.testGoogleMapsApiConnection;
+import static com.nxmbit.wxcompare.util.ApiConnectionDialogUtil.testWeatherApiConnection;
 
 public class WxCompareApplication extends Application {
 
@@ -43,7 +44,6 @@ public class WxCompareApplication extends Application {
         Image appIcon = new Image(WxCompareApplication.class.getResourceAsStream("/com/nxmbit/wxcompare/assets/logo.png"));
         stage.getIcons().add(appIcon);
 
-        // Initialize database connection
         SqliteDbUtil.getSessionFactory();
 
         stage.setTitle("WxCompare");
@@ -58,43 +58,60 @@ public class WxCompareApplication extends Application {
 
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            String apiKey = user.getOpenWeatherMapApiKey();
+            String weatherApiKey = user.getOpenWeatherMapApiKey();
+            String mapsApiKey = user.getGoogleMapsApiKey();
 
-            // Skip the check if no API key is set yet
-            if (apiKey == null || apiKey.trim().isEmpty()) {
+            // Skip the check if some keys are empty
+            if ((weatherApiKey == null || weatherApiKey.trim().isEmpty()) ||
+                    (mapsApiKey == null || mapsApiKey.trim().isEmpty())) {
                 ControllerUtils.loadSettingsView();
                 return;
             }
 
-            CompletableFuture.supplyAsync(() -> {
-                ApiConnectionTestService connectionService = new ApiConnectionTestService();
-                try {
-                    return connectionService.testApiConnection(apiKey);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }).thenAccept(result -> {
-                if (!result.isSuccess()) {
-                    Platform.runLater(() -> {
-                        ApiConnectionDialogUtil.checkApiConnection(
-                                this::checkApiConnectionOnStartup,
-                                ControllerUtils::loadSettingsView,
-                                result);
+            testWeatherApiConnection(weatherApiKey)
+                    .thenCompose(weatherResult -> {
+                        if (weatherResult.isSuccess()) {
+                            // If weather API is successful, test Google Maps API
+                            return testGoogleMapsApiConnection(mapsApiKey)
+                                    .thenApply(mapsResult -> new ApiConnectionDialogUtil.ApiTestResults(weatherResult, mapsResult));
+                        } else {
+                            // Weather API failed, skip Google Maps test
+                            return CompletableFuture.completedFuture(
+                                    new ApiConnectionDialogUtil.ApiTestResults(weatherResult, null));
+                        }
+                    })
+                    .thenAccept(results -> handleApiTestResults(results))
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            ApiConnectionDialogUtil.showConnectionErrorDialog(
+                                    this::checkApiConnectionOnStartup,
+                                    ControllerUtils::loadSettingsView,
+                                    new ApiConnectionTestService.ConnectionResult(false, "Connection error: " + ex.getMessage()));
+                        });
+                        return null;
                     });
-                }
-            }).exceptionally(ex -> {
-                Platform.runLater(() -> {
-                    ApiConnectionDialogUtil.checkApiConnection(
-                            this::checkApiConnectionOnStartup,
-                            ControllerUtils::loadSettingsView,
-                            new ApiConnectionTestService.ConnectionResult(false, "Connection error: " + ex.getMessage()));
-                });
-                return null;
-            });
         } else {
-            // No user found, navigate to settings
+            // No user found, go to settings view
             ControllerUtils.loadSettingsView();
         }
+    }
+
+    private void handleApiTestResults(ApiConnectionDialogUtil.ApiTestResults results) {
+        Platform.runLater(() -> {
+            if (results.weatherResult != null && !results.weatherResult.isSuccess()) {
+                // Weather API failed
+                ApiConnectionDialogUtil.showConnectionErrorDialog(
+                        this::checkApiConnectionOnStartup,
+                        ControllerUtils::loadSettingsView,
+                        results.weatherResult);
+            } else if (results.mapsResult != null && !results.mapsResult.isSuccess()) {
+                // Weather API is fine, but Maps API failed
+                ApiConnectionDialogUtil.showConnectionErrorDialog(
+                        this::checkApiConnectionOnStartup,
+                        ControllerUtils::loadSettingsView,
+                        results.mapsResult);
+            }
+        });
     }
 
     public static HostServices getAppHostServices() {
