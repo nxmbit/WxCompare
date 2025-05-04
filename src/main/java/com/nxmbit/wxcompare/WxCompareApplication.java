@@ -1,6 +1,6 @@
 package com.nxmbit.wxcompare;
 
-import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.CupertinoDark;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.repository.UserRepository;
 import com.nxmbit.wxcompare.service.ApiConnectionTestService;
@@ -32,7 +32,7 @@ public class WxCompareApplication extends Application {
     public void start(Stage stage) throws IOException {
         hostServices = getHostServices();
 
-        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
 
         FXMLLoader fxmlLoader = new FXMLLoader(WxCompareApplication.class.getResource("main-layout.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1024, 768);

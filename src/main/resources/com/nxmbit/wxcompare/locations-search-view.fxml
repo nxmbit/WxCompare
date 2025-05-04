@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 
+<?import javafx.scene.control.Button?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.nxmbit.wxcompare.controller.LocationsSearchController"
@@ -45,6 +46,9 @@
                     <Label fx:id="errorLabel" styleClass="text-danger" visible="false"/>
                 </left>
             </BorderPane>
+            <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10;">
+                <Button fx:id="addButton" text="Add Location" onAction="#addLocationToDatabase"/>
+            </HBox>
         </bottom>
     </BorderPane>
 </StackPane>

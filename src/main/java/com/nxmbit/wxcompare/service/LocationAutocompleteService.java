@@ -62,7 +62,7 @@ public class LocationAutocompleteService {
         JsonNode predictions = root.path("predictions");
 
         for (JsonNode prediction : predictions) {
-            // Need to make additional request to get coordinates
+            // get place_id and fetch location details
             String placeId = prediction.path("place_id").asText();
             Location location = getLocationDetails(placeId);
             if (location != null) {

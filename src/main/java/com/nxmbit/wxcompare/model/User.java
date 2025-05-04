@@ -15,10 +15,12 @@ public class User {
     private String googleMapsApiKey;
 
     @Enumerated(EnumType.STRING)
-    private TemperatureUnit temperatureUnit;
+    private TemperatureUnit temperatureUnit = TemperatureUnit.CELSIUS;
 
     @Enumerated(EnumType.STRING)
-    private SystemOfMeasurement systemOfMeasurement;
+    private SystemOfMeasurement systemOfMeasurement = SystemOfMeasurement.METRIC;
+
+    private int weatherUpdateInterval = 10; // minutes
 
     public User() {
     }
@@ -61,5 +63,13 @@ public class User {
 
     public void setGoogleMapsApiKey(String googleMapsApiKey) {
         this.googleMapsApiKey = googleMapsApiKey;
+    }
+
+    public int getWeatherUpdateInterval() {
+        return weatherUpdateInterval;
+    }
+
+    public void setWeatherUpdateInterval(int weatherUpdateInterval) {
+        this.weatherUpdateInterval = weatherUpdateInterval;
     }
 }

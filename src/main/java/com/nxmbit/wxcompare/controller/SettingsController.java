@@ -4,6 +4,7 @@ import com.nxmbit.wxcompare.enums.SystemOfMeasurement;
 import com.nxmbit.wxcompare.enums.TemperatureUnit;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.repository.UserRepository;
+import com.nxmbit.wxcompare.service.WeatherDataManager;
 import com.nxmbit.wxcompare.util.ApiConnectionDialogUtil;
 import com.nxmbit.wxcompare.util.ControllerUtils;
 import javafx.application.Platform;
@@ -35,6 +36,9 @@ public class SettingsController implements Initializable {
     @FXML
     private ComboBox<SystemOfMeasurement> systemOfMeasurementComboBox;
 
+    @FXML
+    private ComboBox<Integer> updateIntervalComboBox;
+
     private final UserRepository userRepository = new UserRepository();
     private User user;
 
@@ -42,6 +46,7 @@ public class SettingsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         temperatureUnitComboBox.getItems().addAll(TemperatureUnit.values());
         systemOfMeasurementComboBox.getItems().addAll(SystemOfMeasurement.values());
+        updateIntervalComboBox.getItems().addAll(1, 5, 10, 30, 60);
 
         loadUserSettings();
     }
@@ -53,6 +58,7 @@ public class SettingsController implements Initializable {
         googleMapsApiKeyField.setText(user.getGoogleMapsApiKey());
         temperatureUnitComboBox.setValue(user.getTemperatureUnit());
         systemOfMeasurementComboBox.setValue(user.getSystemOfMeasurement());
+        updateIntervalComboBox.setValue(user.getWeatherUpdateInterval());
     }
 
     @FXML
@@ -68,6 +74,7 @@ public class SettingsController implements Initializable {
         user.setGoogleMapsApiKey(mapsApiKey);
         user.setTemperatureUnit(temperatureUnitComboBox.getValue());
         user.setSystemOfMeasurement(systemOfMeasurementComboBox.getValue());
+        user.setWeatherUpdateInterval(updateIntervalComboBox.getValue());
 
         saveButton.setDisable(true);
 
@@ -100,6 +107,7 @@ public class SettingsController implements Initializable {
                 if (results.mapsResult != null && results.mapsResult.isSuccess()) {
                     // Both APIs successful
                     userRepository.save(user);
+                    WeatherDataManager.getInstance().updateScheduleFromSettings();
                     showSuccessAlert();
                 } else if (results.mapsResult != null) {
                     // Weather API good, Maps API bad

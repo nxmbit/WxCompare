@@ -38,19 +38,14 @@
                 <FontIcon iconLiteral="fth-home"/>
             </graphic>
         </Button>
-        <Button styleClass="nav-button" text="Locations Search" onAction="#navigateToLocations" maxWidth="Infinity" alignment="CENTER_LEFT">
+        <Button styleClass="nav-button" text="Locations Search" onAction="#navigateToLocationsSearch" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-search"/>
+            </graphic>
+        </Button>
+        <Button styleClass="nav-button" text="Locations List" onAction="#navigateToLocationsList" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-map-pin"/>
-            </graphic>
-        </Button>
-        <Button styleClass="nav-button" text="Comparison" onAction="#navigateToComparison" maxWidth="Infinity" alignment="CENTER_LEFT">
-            <graphic>
-                <FontIcon iconLiteral="fth-bar-chart-2"/>
-            </graphic>
-        </Button>
-        <Button styleClass="nav-button" text="Settings" onAction="#navigateToSettings" maxWidth="Infinity" alignment="CENTER_LEFT">
-            <graphic>
-                <FontIcon iconLiteral="fth-settings"/>
             </graphic>
         </Button>
         <Button styleClass="nav-button" text="Map" onAction="#navigateToMap" maxWidth="Infinity" alignment="CENTER_LEFT">
@@ -58,11 +53,28 @@
                 <FontIcon iconLiteral="fth-map"/>
             </graphic>
         </Button>
+<!--        <Button styleClass="nav-button" text="Comparison" onAction="#navigateToComparison" maxWidth="Infinity" alignment="CENTER_LEFT">-->
+<!--            <graphic>-->
+<!--                <FontIcon iconLiteral="fth-bar-chart-2"/>-->
+<!--            </graphic>-->
+<!--        </Button>-->
+        <Button styleClass="nav-button" text="Settings" onAction="#navigateToSettings" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-settings"/>
+            </graphic>
+        </Button>
+
         <Button styleClass="nav-button" text="About" onAction="#navigateToAbout" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-info"/>
             </graphic>
         </Button>
+
+        <Separator/>
+        <HBox spacing="10" alignment="CENTER_LEFT" fx:id="statusContainer">
+            <ProgressIndicator fx:id="statusIndicator" prefHeight="16" prefWidth="16" visible="false"/>
+            <Label fx:id="statusLabel" text="" style="-fx-font-size: 12px;"/>
+        </HBox>
     </VBox>
 
     <Separator/>

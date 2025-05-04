@@ -2,16 +2,14 @@ package com.nxmbit.wxcompare.controller;
 
 import com.nxmbit.wxcompare.model.Location;
 import com.nxmbit.wxcompare.model.User;
+import com.nxmbit.wxcompare.repository.LocationRepository;
 import com.nxmbit.wxcompare.repository.UserRepository;
 import com.nxmbit.wxcompare.service.LocationAutocompleteService;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -30,8 +28,11 @@ public class LocationsSearchController {
     @FXML
     private Label errorLabel;
 
-    private LocationAutocompleteService autocompleteService;
+    @FXML
+    private Button addButton;
 
+    private LocationAutocompleteService autocompleteService;
+    private final LocationRepository locationRepository = new LocationRepository();
     private final UserRepository userRepository = new UserRepository();
 
     @FXML
@@ -64,8 +65,47 @@ public class LocationsSearchController {
                 (observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         handleLocationSelected(newValue);
+                        addButton.setDisable(false);
+                    } else {
+                        addButton.setDisable(true);
                     }
                 });
+
+        addButton.setDisable(true);
+    }
+
+    @FXML
+    private void addLocationToDatabase() {
+        Location selectedLocation = resultsListView.getSelectionModel().getSelectedItem();
+        if (selectedLocation != null) {
+            try {
+                // Check if location with same coordinates already exists
+                if (locationRepository.findByCoordinates(
+                        selectedLocation.getLatitude(),
+                        selectedLocation.getLongitude()).isPresent()) {
+                    showAlert("Location already exists",
+                            "This location is already saved in the database.");
+                    return;
+                }
+
+                // Save new location to database
+                Location savedLocation = locationRepository.save(selectedLocation);
+                statusLabel.setText("Location added: " + savedLocation.getName());
+                showAlert("Success", "Location successfully added to your saved locations.");
+            } catch (Exception e) {
+                errorLabel.setText("Error saving location: " + e.getMessage());
+                errorLabel.setVisible(true);
+                showAlert("Error", "Failed to save location: " + e.getMessage());
+            }
+        }
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     private void performSearch(String query) {
@@ -94,7 +134,6 @@ public class LocationsSearchController {
                 }
             });
         }).exceptionally(e -> {
-            // Handle exceptions on the JavaFX Application Thread
             Platform.runLater(() -> {
                 resultsListView.setItems(FXCollections.observableArrayList());
                 errorLabel.setText("Error: " + e.getCause().getMessage());
@@ -106,15 +145,6 @@ public class LocationsSearchController {
     }
 
     private void handleLocationSelected(Location location) {
-        // Here you can:
-        // 1. Save to database
-        // 2. Navigate to location details
-        // 3. Fetch weather for this location
-        // 4. etc.
-
         statusLabel.setText("Selected: " + location.getName());
-
-        // Example: you might want to save this location to the user's favorites
-        // locationService.saveUserLocation(location);
     }
 }
