@@ -9,15 +9,42 @@
             fx:controller="com.nxmbit.wxcompare.controller.LocationsListController"
             prefWidth="800.0" prefHeight="600.0">
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding>
-                <Insets top="15" right="20" bottom="10" left="20"/>
-            </padding>
-            <Label text="Saved Locations" styleClass="view-title"/>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button fx:id="refreshButton" text="Refresh" onAction="#refreshWeatherData"/>
-            <Button fx:id="addLocationButton" text="Add Location" onAction="#openLocationSearch"/>
-        </HBox>
+        <VBox spacing="10">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="15" right="20" bottom="10" left="20"/>
+                </padding>
+                <Label text="Saved Locations" styleClass="view-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="refreshButton" text="Refresh" onAction="#refreshWeatherData"/>
+                <Button fx:id="addLocationButton" text="Add Location" onAction="#openLocationSearch"/>
+            </HBox>
+
+            <!-- Sorting Controls -->
+            <HBox fx:id="sortControlsBox" spacing="10" alignment="CENTER">
+                <padding>
+                    <Insets bottom="5"/>
+                </padding>
+                <Label text="Sort by:"/>
+                <ChoiceBox fx:id="sortByChoiceBox" prefWidth="120"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Sort order:"/>
+                <ToggleButton fx:id="sortOrderToggle" text="Ascending" style="-color-button-bg-selected: -color-bg-subtle"/>
+            </HBox>
+
+            <!-- Pagination Controls -->
+            <HBox fx:id="paginationBox" spacing="10" alignment="CENTER">
+                <padding>
+                    <Insets bottom="10"/>
+                </padding>
+                <Button fx:id="prevPageButton" text="← Previous"/>
+                <Label fx:id="pageInfoLabel" text="Page 1"/>
+                <Button fx:id="nextPageButton" text="Next →"/>
+                <Separator orientation="VERTICAL"/>
+                <Label text="Items per page:"/>
+                <ComboBox fx:id="itemsPerPageCombo" prefWidth="70"/>
+            </HBox>
+        </VBox>
     </top>
 
     <center>

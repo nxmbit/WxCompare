@@ -69,11 +69,6 @@ public class SidebarController {
     }
 
     @FXML
-    private void navigateToDashboard(ActionEvent event) {
-        loadView("dashboard-view.fxml");
-    }
-
-    @FXML
     private void navigateToLocationsSearch(ActionEvent event) {
         loadView("locations-search-view.fxml");
     }
@@ -84,8 +79,8 @@ public class SidebarController {
     }
 
     @FXML
-    private void navigateToComparison(ActionEvent event) {
-        loadView("comparison-view.fxml");
+    private void navigateToKeyboardShortcuts(ActionEvent event) {
+        loadView("keyboard-shortcuts-view.fxml");
     }
 
     @FXML

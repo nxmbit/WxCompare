@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-// Remove: import netscape.javascript.JSObject;
 
 public class MapView extends BorderPane {
 

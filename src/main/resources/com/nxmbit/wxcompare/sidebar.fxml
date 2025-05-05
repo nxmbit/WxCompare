@@ -33,11 +33,6 @@
 
     <!-- Navigation -->
     <VBox spacing="8" styleClass="nav-container" VBox.vgrow="ALWAYS">
-        <Button styleClass="nav-button" text="Dashboard" onAction="#navigateToDashboard" maxWidth="Infinity" alignment="CENTER_LEFT">
-            <graphic>
-                <FontIcon iconLiteral="fth-home"/>
-            </graphic>
-        </Button>
         <Button styleClass="nav-button" text="Locations Search" onAction="#navigateToLocationsSearch" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-search"/>
@@ -53,17 +48,16 @@
                 <FontIcon iconLiteral="fth-map"/>
             </graphic>
         </Button>
-<!--        <Button styleClass="nav-button" text="Comparison" onAction="#navigateToComparison" maxWidth="Infinity" alignment="CENTER_LEFT">-->
-<!--            <graphic>-->
-<!--                <FontIcon iconLiteral="fth-bar-chart-2"/>-->
-<!--            </graphic>-->
-<!--        </Button>-->
         <Button styleClass="nav-button" text="Settings" onAction="#navigateToSettings" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-settings"/>
             </graphic>
         </Button>
-
+        <Button styleClass="nav-button" text="Keyboard Shortcuts" onAction="#navigateToKeyboardShortcuts" maxWidth="Infinity" alignment="CENTER_LEFT">
+            <graphic>
+                <FontIcon iconLiteral="fth-grid"/>
+            </graphic>
+        </Button>
         <Button styleClass="nav-button" text="About" onAction="#navigateToAbout" maxWidth="Infinity" alignment="CENTER_LEFT">
             <graphic>
                 <FontIcon iconLiteral="fth-info"/>

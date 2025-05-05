@@ -4,8 +4,6 @@ module com.nxmbit.wxcompare {
     requires jakarta.persistence;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.feather;
-    requires org.kordamp.ikonli.material2;
-    requires org.kordamp.ikonli.materialdesign;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires javafx.fxml;

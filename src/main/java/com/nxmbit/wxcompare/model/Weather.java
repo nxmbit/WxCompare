@@ -16,8 +16,8 @@ public class Weather {
     private int windDeg;
     private Instant timestamp;
     private int cloudinessPercent;
-    private int rainMmLastHour;
-    private int snowMmLastHour;
+    private int rainMmLastHour = 0;
+    private int snowMmLastHour = 0;
     private int visibilityInMeters;
     private Instant sunrise;
     private Instant sunset;
