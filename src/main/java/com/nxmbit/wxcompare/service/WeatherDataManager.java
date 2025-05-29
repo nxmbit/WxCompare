@@ -1,5 +1,6 @@
 package com.nxmbit.wxcompare.service;
 
+import com.nxmbit.wxcompare.event.WeatherDataUpdatedEvent;
 import com.nxmbit.wxcompare.model.Location;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.model.Weather;
@@ -148,6 +149,8 @@ public class WeatherDataManager {
                     return CompletableFuture.allOf(futures);
                 })
                 .whenComplete((result, error) -> {
+                    EventBusService.post(new WeatherDataUpdatedEvent());
+                    System.out.println("Weather data updated");
                     Platform.runLater(() -> {
                         updatingProperty.set(false);
                         if (error != null) {

@@ -1,11 +1,14 @@
 package com.nxmbit.wxcompare.controller;
 
+import com.google.common.eventbus.Subscribe;
 import com.nxmbit.wxcompare.enums.WeatherSortField;
+import com.nxmbit.wxcompare.event.WeatherDataUpdatedEvent;
 import com.nxmbit.wxcompare.model.Location;
 import com.nxmbit.wxcompare.model.User;
 import com.nxmbit.wxcompare.model.Weather;
 import com.nxmbit.wxcompare.repository.LocationRepository;
 import com.nxmbit.wxcompare.repository.UserRepository;
+import com.nxmbit.wxcompare.service.EventBusService;
 import com.nxmbit.wxcompare.service.WeatherDataManager;
 import com.nxmbit.wxcompare.util.ControllerUtils;
 import com.nxmbit.wxcompare.util.WeatherIconUtil;
@@ -58,7 +61,7 @@ public class LocationsListController implements Initializable {
     private final UserRepository userRepository = new UserRepository();
     private final WeatherDataManager weatherDataManager = WeatherDataManager.getInstance();
 
-    // Pagination and sorting variables
+    // pagination and sorting variables
     private List<Location> allLocations = new ArrayList<>();
     private final Map<Long, Weather> locationWeatherMap = new ConcurrentHashMap<>();
     private int currentPage = 0;
@@ -68,6 +71,7 @@ public class LocationsListController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        EventBusService.register(this);
         setupPaginationControls();
         setupSortControls();
         loadLocations();
@@ -462,5 +466,10 @@ public class LocationsListController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @Subscribe
+    public void onWeatherUpdate(WeatherDataUpdatedEvent event) {
+        Platform.runLater(this::loadLocations);
     }
 }

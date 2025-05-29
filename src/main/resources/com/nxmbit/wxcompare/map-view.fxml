@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.nxmbit.wxcompare.controller.MapController"
             fx:id="mapContainer"
-            prefHeight="600.0"
-            prefWidth="800.0">
+            prefHeight="600.0" prefWidth="800.0">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10" />
+    </padding>
+
+    <center>
+        <WebView fx:id="webView" />
+    </center>
 </BorderPane>

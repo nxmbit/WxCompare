@@ -110,19 +110,43 @@ public class MapView extends BorderPane {
                     function addWeatherMarker(lat, lng, title, weatherInfo) {
                         if (map) {
                             const markerId = `${lat},${lng}`;
-
-                            // Remove existing marker at this location if any
+            
+                            // Remove existing marker at this location
                             if (markers[markerId]) {
                                 map.removeLayer(markers[markerId]);
                             }
-
-                            const marker = L.marker([lat, lng]).addTo(map);
-                            marker.bindPopup(`<b>${title}</b><br>${weatherInfo}`);
-
-                            // Store marker reference
+            
+                            // Extract temperature from weatherInfo to display on marker
+                            const tempMatch = weatherInfo.match(/(\\d+(\\.\\d+)?)\\s*°C/);
+                            const temp = tempMatch ? tempMatch[1] : "?";
+                           \s
+                            // Create a custom icon with temperature display
+                            const weatherIcon = L.divIcon({
+                                className: 'weather-marker-icon',
+                                html: `<div class="temp-marker">${temp}°</div>`,
+                                iconSize: [40, 40],
+                                iconAnchor: [20, 40]
+                            });
+            
+                            // Create the marker with the custom icon
+                            const marker = L.marker([lat, lng], {
+                                icon: weatherIcon,
+                                title: title
+                            }).addTo(map);
+                           \s
+                            // Add popup with detailed weather info
+                            marker.bindPopup(`
+                                <div class="weather-popup">
+                                    <h3>${title}</h3>
+                                    <div class="weather-details">
+                                        ${weatherInfo}
+                                    </div>
+                                </div>
+                            `);
+                           \s
                             markers[markerId] = marker;
                         }
-                    }
+                       }
 
                     // Bridge functions between Java and JavaScript
                     window.centerMapFromJava = function(lat, lng) {
